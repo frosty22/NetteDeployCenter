@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<DEBUG>
+{foreach $data as $module => $output}
+	{if $output !== NULL}
+	<{$module}>
+	{if \Nette\Utils\Validators::isList($output)}
+		{foreach $output as $item}
+		<ITEM>
+			{foreach $item as $col => $value}
+			{if $value instanceof \DateTime}{var $value = $value->getTimestamp()}{/if}
+			<{$col|upper}><![CDATA[{$value}]]></{$col|upper}>
+			{/foreach}
+		</ITEM>
+		{/foreach}
+	{else}
+		{foreach $item as $col => $value}
+			{if $value instanceof \DateTime}{var $value = $value->getTimestamp()}{/if}
+			<{$col|upper}><![CDATA[{$value}]]></{$col|upper}>
+		{/foreach}
+	{/if}
+	</{$module}>
+	{/if}
+{/foreach}
+</DEBUG>
