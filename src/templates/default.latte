@@ -1,0 +1,39 @@
+{layout "@layout.latte"}
+{#content}
+
+<div class="hero-unit">
+	<h1>Vítejte v DeployCenteru</h1>
+	<p>&nbsp;</p>
+	<p>Toto centrum bylo vytvořeno za cílem jednoduché a rychlé správy chyb Vašich aplikací, a zároveň jako rychlé řešení problémů při deploymentu. Tento systém si žije vlastním životem, tj. mimo životní cyklus Vaší aplikace.</p>
+</div>
+
+
+<h2>Dostupné moduly centra</h2>
+
+
+<table class="table">
+	<thead>
+	<tr>
+		<th>Název modulu</th>
+		<th>Stav</th>
+		<th>Popis modulu</th>
+	</tr>
+	</thead>
+	<tbody>
+
+	{foreach $list as $action => $note}
+	<tr>
+		<td>{? echo ucfirst($action)}</td>
+		<td>
+			{ifset $modules[$action]}
+				<span class="label label-success">Aktivní</span>
+			{else}
+				<span class="label label-important">Neaktivní</span>
+			{/ifset}
+		</td>
+		<td>{$note}</td>
+	</tr>
+	{/foreach}
+
+	</tbody>
+</table>

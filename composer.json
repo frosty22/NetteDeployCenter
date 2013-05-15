@@ -1,0 +1,21 @@
+{
+	"name": "frosty22/nette-deploy-center",
+	"type": "library",
+	"description": "Center for managing deployment, browse logs, exceptions etc. on production.",
+	"license": ["BSD-3-Clause", "GPL-2.0", "GPL-3.0"],
+	"authors": [
+		{
+			"name": "Vít Ledvinka",
+			"homepage": "http://www.frosty22.cz"
+		}
+	],
+	"require": {
+		"php": ">= 5.2.0",
+		"nette/nette": "2.*.*"	
+	},
+	"autoload": {
+		"psr-0": {
+			"DeployCenter\\" : "src/"
+		}	
+	}	
+}
