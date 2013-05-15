@@ -1,5 +1,7 @@
 DeployCenter
-===========
+============
+Version 1.0
+
 
 Implementace v bootstrap.php, ideálně ihned po načtení autoloaderu z Composeru, aby se nestalo, že pád RobotLoadera způsobí nefunkčnost tohoto DeployCentra:
 
