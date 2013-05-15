@@ -3,11 +3,49 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
-		<link rel="stylesheet" media="screen" href="/css/bootstrap.css" />
+
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.0/jquery.min.js"></script>
 		<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.1/jquery-ui.min.js"></script>
-		<script type="text/javascript" src="/js/bootstrap.js"></script>
-		<script type="text/javascript" src="/js/DeployCenter.js?1"></script>
+
+		<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+		<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+
+		<script type="text/javascript">
+			$(document).ready(function(){
+
+				$(".js-shorter").each(function(){
+					var text = $(this).text();
+					var length = $(this).attr("data-length");
+					if (text.length > length) {
+						var firstPart = text.substr(0, length - 3);
+						var lastPart = "<span class='js-shorter-hidenable' style='display:none'>" + text.substr(length - 3) + "</span>";
+					}
+					$(this).html(firstPart + "<span class='js-shorter-delimiter'>...</span>" + lastPart + " <a href='#' class='js-shorter-handler'>více</a>");
+				});
+
+				$(".js-shorter-handler").click(function(){
+					var elm = $(this).parent();
+					if (elm.hasClass("js-shorter-open")) {
+						elm.removeClass("js-shorter-open");
+						elm.find(".js-shorter-delimiter").show();
+						elm.find(".js-shorter-hidenable").hide();
+						$(this).text("více");
+					} else {
+						elm.addClass("js-shorter-open");
+						elm.find(".js-shorter-delimiter").hide();
+						elm.find(".js-shorter-hidenable").show();
+						$(this).text("méně");
+					}
+					return false;
+				});
+
+				$("a[data-confirm]").click(function(){
+					return window.confirm($(this).attr("data-confirm"));
+				});
+
+			});
+		</script>
+
 		<title>DeployCenter</title>
 	</head>
 	<body>
