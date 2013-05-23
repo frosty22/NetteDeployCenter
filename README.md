@@ -1,9 +1,12 @@
 DeployCenter
 ============
-Version 1.0
+Version 1.1
 
 
-Implementace v bootstrap.php, ideálně ihned po načtení autoloaderu z Composeru, aby se nestalo, že pád RobotLoadera způsobí nefunkčnost tohoto DeployCentra:
+Implementace v bootstrap.php, ideálně ihned po načtení autoloaderu z Composeru, aby se nestalo, že pád RobotLoadera způsobí nefunkčnost tohoto DeployCentra.
+
+Zároveň systém volitelně podporuje tzv. údržbu, tj. pokud vystavujete změny a chtěli byste, aby Vám uživatelé nemohli zasahovat do stránky, když není kompletně vystavená. 
+Pak můžete po registraci DeployCentera zavolat metodu **checkMaintenance**, která v případě, že je údržba aktivní zobrazí "mainteance" šablonu, samozřejmě můžete použít vlastní zavoláním **setMaintenanceTemplateFile**.
 
 
 ```php
@@ -20,10 +23,61 @@ $tempDir = __DIR__ . "/temp";
 $deploy = new DeployCenter\Application($logDir, $tempDir, "pass123");
 $deploy->register("debug");
 
+// Debugger maintenance support (optional)
+//$deploy->setMaintenanceTemplateFile("path/to/our/template.latte"); // If we want own maintenance template
+$deploy->checkMaintenance();  // Check maintenance, if in progress kill page and show maintenance template
+
 
 // Configure application
 $configurator = new Nette\Config\Configurator;
 
-....
+...
 ?>
 ```
+
+Pokud byste chtěli informovat uživatele chvíli před vystavení, je to možné pomocí komponenty **AlertControl**, které předáte objekt Maintenance.
+Můžeme ho například v bootstrapu přidat do kontejneru jako službu:
+
+```php
+<?php
+...
+
+// Create container
+$container = $configurator->createContainer();
+
+// Debugger center - add dynamic service Maintenance, for support AlertControl (optional)
+$container->addService("maintenance", $deploy->getMaintenance());
+
+...
+?>
+```
+
+A poté například ve Vašem **BasePresenter** si vytvořit tuto komponentu:
+
+> Pozn.: Bohužel zatím jsem nepřišel na způsob, jak se vyhnout volání kontextu, když je služba dynamicky předaná.
+
+```php
+<?php
+
+abstract class BasePresenter extends Nette\Application\UI\Presenter {
+
+	/**
+	 * @return \DeployCenter\Maintenance\AlertControl
+	 */
+	protected function createComponentAlertControl()
+	{
+		$alertControl = new \DeployCenter\Maintenance\AlertControl();
+		$alertControl->setMaintenance($this->context->getService("maintenance"));
+		return $alertControl;
+	}
+
+}
+?>
+```
+ 
+A v šabloně, kde chci mít onu hlášku v případě, že v blízké době (v tuto chvíli 10 minut) dojde k vystavení a možné nefunkčnosti stránek, vyrenderujeme komponentu:
+
+```html
+{control alertControl}
+```
+
