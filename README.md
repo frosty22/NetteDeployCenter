@@ -2,6 +2,8 @@ DeployCenter
 ============
 Version 1.1
 
+> Upozornění: Podpora Maintenance je dostupná zatím pouze v @dev verzi nikoliv @stable, takže pokud používáte
+> stable, poté implementuje pouze až k volání metody register() .. všechny řádky níže již jsou irelevantní.
 
 Implementace v bootstrap.php, ideálně ihned po načtení autoloaderu z Composeru, aby se nestalo, že pád RobotLoadera způsobí nefunkčnost tohoto DeployCentra.
 
