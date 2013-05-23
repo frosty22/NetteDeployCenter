@@ -1,0 +1,56 @@
+{layout "@layout.latte"}
+{block content}
+<h2>Údržba</h2>
+
+<div class="row-fluid">
+<p>Zde můžete nastavit plánovanou údržbu webu. V případě, když vyplníte datum a čas níže, začne se <strong>10 minut předtím</strong> zobrazovat na webové stránce hláška o plánované údržbě <i>(pokud máte implementovanou komponentu AlertControl)</i>.</p>
+
+<p>Po vystavení a zrušení této hlášky je nutné zde odstranit vyplněný čas a potvrdit, čímž se přestane informativní hláška zobrazovat.</p>
+
+<p>Pokud vyžadujete zároveň i zákaz přístupu na web, tj. přesně od data a času zadaného níže, se zablokují webové stránky a začne zobrazovat maintenance stránka.</p>
+</div>
+
+
+{if $start}
+	<h3>Nastavená údržba</h3>
+	<div class="alert alert-info">
+		V tuto chvíli již máte nastavenou údržbu na čas <strong>{$start}</strong>,
+		{if $safe} se <strong>zakázaným</strong>{else}s povoleným{/if}
+		přístupem na web.
+	</div>
+
+	{if $active}
+	<div class="alert alert-danger">Nastavená údržba je nyní aktivní, chcete ji <a href="{$remove}" class="btn">zrušit</a>.</div>
+	{/if}
+
+{/if}
+
+
+<h3>Nastavení plánované údržby</h3>
+
+{ifset $error}
+<div class="alert alert-error">{$error}</div>
+{/ifset}
+
+<form method="POST" class="form-horizontal">
+	<div class="control-group">
+		<label class="control-label" for="input-start">Začátek údržby</label>
+		<div class="controls">
+			<input type="text" id="input-start" placeholder="např. {date("j.n.Y H:i")}" name="start" value="{$start ? $start : date('j.n.Y H:i')}" />
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<label class="checkbox">
+				<input type="checkbox" name="safe"{if $safe} checked="checked"{/if} value="1"> Zakázat přístup na web
+			</label>
+		</div>
+	</div>
+	<div class="control-group">
+		<div class="controls">
+			<input type="submit" name="save" class="btn" value="Uložit" />
+		</div>
+	</div>
+</form>
+
+

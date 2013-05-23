@@ -1,14 +1,16 @@
 <?php
 
 namespace DeployCenter;
-/*
+
+require_once __DIR__ . "/Maintenance/Maintenance.php";
 require_once __DIR__ . "/IModule.php";
 require_once __DIR__ . "/BaseModule.php";
 require_once __DIR__ . "/Modules/DefaultModule.php";
 require_once __DIR__ . "/Modules/ExceptionsModule.php";
 require_once __DIR__ . "/Modules/ApiModule.php";
 require_once __DIR__ . "/Modules/LogModule.php";
-*/
+require_once __DIR__ . "/Modules/MaintenanceModule.php";
+
 /**
  * Application of deployment center.
  *
@@ -80,12 +82,26 @@ class Application extends \Nette\Object
 
 
 	/**
+	 * @var \DeployCenter\Maintenance\Maintenance
+	 */
+	private $maintenance;
+
+
+	/**
+	 * @var string
+	 */
+	private $maintenanceTemplate;
+
+
+	/**
 	 * @param string $logDir Path to log directory
 	 * @param string $tempDir Path to temp directory
 	 * @param string $password Password for access
 	 */
 	public function __construct($logDir, $tempDir, $password)
 	{
+		date_default_timezone_set("Europe/Prague"); // TODO: Better solution!
+
 		$this->logDir = $logDir;
 		$this->tempDir = $tempDir;
 		$this->password = $password;
@@ -99,13 +115,40 @@ class Application extends \Nette\Object
 		$this->addModule("log", function(Application $application) { return new \DeployCenter\Modules\LogModule($application->logDir); });
 
 		$this->addModule("api", function() { return new \DeployCenter\Modules\ApiModule(); });
+
+		$this->addModule("maintenance", function(Application $application) { return new \DeployCenter\Modules\MaintenanceModule($application->getMaintenance()); });
+	}
+
+
+	/**
+	 * Check maintenance state, and kill page if is in progress.
+	 * @return Application
+	 */
+	public function checkMaintenance()
+	{
+		if ($this->getMaintenance()->inProcess() && $this->getMaintenance()->inSafeMode()) {
+			$this->sendMaintenance();
+		}
+		return $this;
+	}
+
+
+	/**
+	 * Set filename to maintenance latte template
+	 * @param string $file
+	 * @return Application
+	 */
+	public function setMaintenanceTemplateFile($file)
+	{
+		$this->maintenanceTemplate = $file;
+		return $this;
 	}
 
 
 	/**
 	 * Register application on param.
 	 * @param string $param Name of GET param
-	 * @return bool
+	 * @return Application
 	 */
 	public function register($param)
 	{
@@ -114,7 +157,8 @@ class Application extends \Nette\Object
 		if (isset($_GET[$param]) && ($_GET[$param] === $this->password)) {
 			$this->run();
 		}
-		return FALSE;
+
+		return $this;
 	}
 
 
@@ -195,14 +239,9 @@ class Application extends \Nette\Object
 	 */
 	protected function run()
 	{
-		date_default_timezone_set("Europe/Prague"); // TODO: Better solution!
-
 		$action = isset($_GET[self::ACTION_KEY]) ? $_GET[self::ACTION_KEY] : "default";
 
-		$this->template = new \Nette\Templating\FileTemplate();
-		$this->template->registerFilter(new \Nette\Latte\Engine());
-		$this->template->registerHelperLoader("\Nette\Templating\Helpers::loader");
-		$this->template->registerHelper("link", array($this, "link"));
+		$this->template = $this->createTemplate();
 		$this->template->modules = $this->getModules();
 
 		if ($module = $this->getModule($action)) {
@@ -228,6 +267,19 @@ class Application extends \Nette\Object
 		}
 
 		$this->sendResponse();
+	}
+
+
+	/**
+	 * Return Maintenance object, mainly for AlertControl
+	 * @return \DeployCenter\Maintenance\Maintenance
+	 */
+	public function getMaintenance()
+	{
+		if (!$this->maintenance) {
+			$this->maintenance = new \DeployCenter\Maintenance\Maintenance($this->tempDir);
+		}
+		return $this->maintenance;
 	}
 
 
@@ -298,6 +350,22 @@ class Application extends \Nette\Object
 
 
 	/**
+	 * Send maintenance page
+	 */
+	public function sendMaintenance()
+	{
+		header('HTTP/1.1 503 Service Unavailable');
+		header('Retry-After: 300'); // 5 minutes in seconds
+
+		$this->template = $this->createTemplate();
+
+		$file = $this->maintenanceTemplate ? $this->maintenanceTemplate : $this->templateDir . "/maintenancePage.latte";
+		$this->template->setFile($file);
+		$this->sendResponse();
+	}
+
+
+	/**
 	 * Redirect to link
 	 * @param string $link
 	 * @param array $params
@@ -315,8 +383,8 @@ class Application extends \Nette\Object
 	 */
 	protected function getParams()
 	{
-		// TODO: Better solution
-		return $_GET;
+		// TODO: Need really better solution =)
+		return array_merge($_GET, $_POST);
 	}
 
 
@@ -329,5 +397,18 @@ class Application extends \Nette\Object
 		return $this->templateDir . "/404.latte";
 	}
 
+
+	/**
+	 * Create template
+	 * @return \Nette\Templating\FileTemplate
+	 */
+	protected function createTemplate()
+	{
+		$template = new \Nette\Templating\FileTemplate();
+		$template->registerFilter(new \Nette\Latte\Engine());
+		$template->registerHelperLoader("\Nette\Templating\Helpers::loader");
+		$template->registerHelper("link", array($this, "link"));
+		return $template;
+	}
 
 }
