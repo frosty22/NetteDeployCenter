@@ -34,7 +34,7 @@ class ExceptionsModule extends \DeployCenter\BaseModule
 	/**
 	 * Max read lines from errorLog
 	 */
-	const MAX_READLINE = 600;
+	const MAX_READLINE = 5000;
 
 
 	/**
@@ -115,7 +115,7 @@ class ExceptionsModule extends \DeployCenter\BaseModule
 
 		$path = $this->checkFilename($filename);
 
-		$newname = "resolved_" . $filename;
+		$newname = $filename . ".resolved";
 		rename($path, $this->logDir . "/" . $newname);
 
 		$this->application->redirect("Exceptions:default");
