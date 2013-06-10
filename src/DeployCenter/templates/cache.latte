@@ -1,0 +1,17 @@
+{layout "@layout.latte"}
+{block content}
+<h2>Cache</h2>
+
+{ifset $cleared}
+<div class="alert alert-success">Odstraněno <strong>{$cleared} souborů</strong> z cache.</div>
+{/ifset}
+
+<table class="table">
+	{foreach $folders as $dir}
+	<tr>
+		<td>{$dir["name"]}</td>
+		<td><a href="{$dir["clear"]}" class="btn btn-mini btn-danger" data-confirm="Skutečně vyprázdnit tuto cache?">
+			<i class="icon icon-white icon-trash"></i> Vyprázdnit</a></td>
+	</tr>
+	{/foreach}
+</table>

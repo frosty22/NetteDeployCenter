@@ -9,6 +9,7 @@ require_once __DIR__ . "/Modules/DefaultModule.php";
 require_once __DIR__ . "/Modules/ExceptionsModule.php";
 require_once __DIR__ . "/Modules/ApiModule.php";
 require_once __DIR__ . "/Modules/LogModule.php";
+require_once __DIR__ . "/Modules/CacheModule.php";
 require_once __DIR__ . "/Modules/MaintenanceModule.php";
 
 /**
@@ -117,6 +118,9 @@ class Application extends \Nette\Object
 		$this->addModule("api", function() { return new \DeployCenter\Modules\ApiModule(); });
 
 		$this->addModule("maintenance", function(Application $application) { return new \DeployCenter\Modules\MaintenanceModule($application->getMaintenance()); });
+
+		$cacheDir = $tempDir . "/cache";
+		$this->addModule("cache", function() use ($cacheDir) { return new \DeployCenter\Modules\CacheModule($cacheDir); });
 	}
 
 

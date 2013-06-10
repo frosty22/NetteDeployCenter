@@ -26,7 +26,8 @@ class DefaultModule extends \DeployCenter\BaseModule
 		"exceptions" => "Modul poskytující přehled všech vyhozených vyjímek, zároveň detekující jejich četnost dle error logu.",
 		"log" => "Modul pro přehled všech log souborů s možností jejich zobrazení a odstranění.",
 		"api" => "Modul poskytující přístup ke všem datům z ostatních modulů pomocí XML exportního souboru.",
-		"maintenance" => "Module pro kontrolu stavu údržby - spouštění / ukončování a plánování vystavení"
+		"maintenance" => "Modul pro kontrolu stavu údržby - spouštění / ukončování a plánování vystavení",
+		"cache" => "Modul umožňující vyprázdnění cache"
 	);
 
 
