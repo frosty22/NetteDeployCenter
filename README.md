@@ -1,6 +1,6 @@
 DeployCenter
 ============
-Version 1.1
+Verze 1.1
 
 > Upozornění: Podpora Maintenance je dostupná zatím pouze v @dev verzi nikoliv @stable, takže pokud používáte
 > stable, poté implementuje pouze až k volání metody register() .. všechny řádky níže již jsou irelevantní.
