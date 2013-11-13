@@ -71,7 +71,7 @@ class LogModule extends \DeployCenter\BaseModule
 			$this->application->sendNotFound("Exception with name $filename not found.");
 		}
 
-		$this->application->sendResponse(file_get_contents($filename));
+		$this->application->sendResponse(file_get_contents($filename), 'text/plain; charset=utf-8');
 	}
 
 

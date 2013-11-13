@@ -19,7 +19,8 @@ class ApiModule extends \DeployCenter\BaseModule
 
 
 	/**
-	 * API
+	 * @param \DeployCenter\Application $application
+	 * @param string $handle
 	 * @param array $params
 	 */
 	public function run(\DeployCenter\Application $application, $handle, array $params)

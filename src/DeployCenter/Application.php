@@ -341,9 +341,13 @@ class Application extends \Nette\Object
 	/**
 	 * Send template.
 	 */
-	public function sendResponse($output = NULL)
+	public function sendResponse($output = NULL, $contentType = 'text/html; charset=utf-8')
 	{
 		if ($output) {
+			
+			if ($contentType !== NULL)
+				header('Content-type: ' . $contentType);
+
 			echo $output;
 		} else {
 			$this->template->render();
