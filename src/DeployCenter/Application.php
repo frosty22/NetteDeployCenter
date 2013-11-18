@@ -344,7 +344,7 @@ class Application extends \Nette\Object
 	public function sendResponse($output = NULL, $contentType = 'text/html; charset=utf-8')
 	{
 		if ($output) {
-			
+
 			if ($contentType !== NULL)
 				header('Content-type: ' . $contentType);
 

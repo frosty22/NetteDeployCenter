@@ -115,7 +115,7 @@ class ExceptionsModule extends \DeployCenter\BaseModule
 
 		$path = $this->checkFilename($filename);
 
-		$newname = $filename . ".resolved";
+		$newname = date('Y-m-d-H-i-s') . "-" . md5($filename) . ".resolved";
 		rename($path, $this->logDir . "/" . $newname);
 
 		$this->application->redirect("Exceptions:default");
